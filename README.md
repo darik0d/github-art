@@ -2,7 +2,7 @@
 
 This is the **generator repo**: it holds the scripts that produce and push art to GitHub's contribution graph.
 
-> The **scratch repo** (`github-art` or whatever you named it) is a separate empty repository that exists only to receive backdated commits. See [Setup](#setup) below.
+> The **scratch repo** (`github-art-scratch` or whatever you named it) is a separate empty repository that exists only to receive backdated commits. See [Setup](#setup) below.
 
 ---
 
@@ -32,16 +32,16 @@ The window is computed from today's date at runtime. Running `clean.js` + `gener
 | Repo | What it is | Should contain |
 |---|---|---|
 | **This repo** (generator) | The repo you're reading now | `generate.js`, `commit.js`, `clean.js` |
-| **Scratch repo** (`github-art`) | A dedicated empty public repo on your GitHub account | Only what `commit.js` writes there |
+| **Scratch repo** (`github-art-scratch`) | A dedicated empty public repo on your GitHub account | Only what `commit.js` writes there |
 
 Never run `commit.js` against a repo that has real code: it will pollute the history with hundreds of empty commits.
 
 ### 2. Create the scratch repo
 
-Go to GitHub, create a new empty public repo (e.g. `github-art`), then clone it:
+Go to GitHub, create a new empty public repo (e.g. `github-art-scratch`), then clone it:
 
 ```bash
-git clone https://github.com/YOURUSERNAME/github-art
+git clone https://github.com/YOURUSERNAME/github-art-scratch
 ```
 
 Make sure git knows who you are: the email must match your GitHub account:
@@ -67,14 +67,14 @@ Each week, old columns scroll off the left edge of the graph, so the art drifts.
 
 ```bash
 # 1. Wipe the scratch repo
-node clean.js --repo C:\path\to\github-art
+node clean.js --repo C:\path\to\github-art-scratch
 
 # 2. Generate a fresh schedule from today's window
 node generate.js --text "HELLO" --output commits.json
 # or: node generate.js --png mylogo.png --output commits.json
 
 # 3. Replay the commits
-node commit.js --input commits.json --repo C:\path\to\github-art --push
+node commit.js --input commits.json --repo C:\path\to\github-art-scratch --push
 ```
 
 If you are already inside the scratch repo folder, use `--repo .` instead of the full path.
@@ -92,7 +92,7 @@ node generate.js --json pattern.json --output commits.json
 | Flag | Default | Description |
 |---|---|---|
 | `--png <file>` | | PNG image to use as the pattern |
-| `--text <string>` | | Text rendered with the built-in 5×7 bitmap font |
+| `--text <string>` | | Text rendered with the built-in 5x7 bitmap font |
 | `--json <file>` | | Hand-drawn JSON pixel grid (see below) |
 | `--output <file>` | `commits.json` | Where to write the schedule |
 | `--intensity <n>` | `10` | Commits per lit cell (1-20). See intensity note below. |
@@ -108,7 +108,7 @@ The pattern is automatically shifted down by 1 row (onto Monday) so it sits in t
 ## commit.js
 
 ```bash
-node commit.js --input commits.json --repo /path/to/github-art
+node commit.js --input commits.json --repo /path/to/github-art-scratch
 ```
 
 | Flag | Default | Description |
@@ -126,7 +126,7 @@ node commit.js --input commits.json --repo /path/to/github-art
 Wipes all commit history in the scratch repo by orphaning the branch and force-pushing. Run this before redrawing.
 
 ```bash
-node clean.js --repo /path/to/github-art
+node clean.js --repo /path/to/github-art-scratch
 ```
 
 | Flag | Default | Description |
@@ -142,7 +142,7 @@ You will be asked to type `YES` before anything is destroyed.
 ## PNG tips
 
 - Black (or any dark, opaque) pixels become lit cells; transparent or white pixels become empty.
-- The image is automatically scaled to 53×7 using area-averaging.
+- The image is automatically scaled to 53x7 using area-averaging.
 - Use a wide banner-style image (roughly 7:1 aspect ratio): thin strokes look much cleaner than filled shapes at 7px tall.
 - If the output looks noisy, lower `--threshold` (e.g. `--threshold 60`) to require darker pixels before they count as lit.
 - For white-on-dark images, add `--invert`.
@@ -177,4 +177,4 @@ You will be asked to type `YES` before anything is destroyed.
 
 `A-Z`, `0-9`, and: `space ! ? . : < > / \`
 
-Rendered in a 5×7 pixel bitmap font with a 1-column gap between letters.
+Rendered in a 5x7 pixel bitmap font with a 1-column gap between letters.
